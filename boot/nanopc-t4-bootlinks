@@ -1,0 +1,88 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# U-Boot style boot aliases for the FriendlyElec NanoPC-T4 (mainline kernel):
+#
+#   /boot/Image   -> vmlinuz-<release>
+#   /boot/uInitrd -> uInitrd-<release>   (u-boot image wrapping initrd.img-<release>)
+#
+# FriendlyElec / Armbian style boot scripts load the fixed names /Image and
+# /uInitrd, so they have to be relinked on every kernel (re)install instead of
+# being shipped as files in the .deb.
+#
+# Installed by linux-image-* as:
+#   /etc/kernel/postinst.d/zz-nanopc-t4-bootlinks      ($1 release, $2 /boot/vmlinuz-<release>)
+#   /etc/kernel/postrm.d/zz-nanopc-t4-bootlinks
+#   /etc/initramfs/post-update.d/zz-nanopc-t4-uinitrd  ($1 release)
+#
+# The "zz-" prefix makes run-parts execute it after initramfs-tools, so
+# initrd.img-<release> already exists when uInitrd is generated.
+#
+# Environment knobs: BOOT_DIR (default /boot), MKIMAGE (default mkimage).
+
+set -e
+
+release=${1:-}
+bootdir=${BOOT_DIR:-/boot}
+
+mode=install
+case $0 in
+*/postrm.d/*|*postrm*) mode=remove ;;
+esac
+
+[ -n "$release" ] || exit 0
+[ -d "$bootdir" ] || exit 0
+
+# Symlink, falling back to a copy on filesystems without symlinks (vfat /boot).
+link_or_copy() { # $1 target name inside $bootdir, $2 link path
+	if ln -sfn "$1" "$2" 2>/dev/null; then
+		return 0
+	fi
+	[ -f "$bootdir/$1" ] || return 1
+	cp -f "$bootdir/$1" "$2"
+}
+
+case $mode in
+remove)
+	for alias in Image uInitrd; do
+		[ -L "$bootdir/$alias" ] || continue
+		case $(readlink "$bootdir/$alias") in
+		*"$release"*) rm -f "$bootdir/$alias" ;;
+		esac
+	done
+	rm -f "$bootdir/uInitrd-$release"
+	;;
+
+install)
+	if [ -f "$bootdir/vmlinuz-$release" ]; then
+		link_or_copy "vmlinuz-$release" "$bootdir/Image" ||
+			echo "nanopc-t4-bootlinks: cannot create $bootdir/Image" >&2
+	fi
+
+	initrd=$bootdir/initrd.img-$release
+	wrapped=$bootdir/uInitrd-$release
+	if [ -f "$initrd" ]; then
+		if command -v "${MKIMAGE:-mkimage}" >/dev/null 2>&1; then
+			# -C none: U-Boot hands the blob over untouched and the kernel
+			# autodetects gzip/zstd/xz/lz4 (CONFIG_RD_*=y).  A uImage header is
+			# still needed so booti/bootm know the payload size.
+			if "${MKIMAGE:-mkimage}" -A arm64 -O linux -T ramdisk -C none \
+				-n "uInitrd $release" -d "$initrd" "$wrapped.tmp" >/dev/null 2>&1; then
+				mv -f "$wrapped.tmp" "$wrapped"
+			else
+				rm -f "$wrapped.tmp"
+			fi
+		fi
+		if [ -f "$wrapped" ]; then
+			link_or_copy "uInitrd-$release" "$bootdir/uInitrd" ||
+				echo "nanopc-t4-bootlinks: cannot create $bootdir/uInitrd" >&2
+		else
+			echo "nanopc-t4-bootlinks: mkimage (u-boot-tools) missing," \
+				"$bootdir/uInitrd links to the plain initramfs" >&2
+			link_or_copy "initrd.img-$release" "$bootdir/uInitrd" || true
+		fi
+	fi
+	;;
+esac
+
+exit 0

@@ -1,0 +1,38 @@
+Format: 1.8
+Date: Wed, 28 Oct 2026 22:59:03 +0800
+Source: linux-upstream
+Binary: linux-headers-7.3.0-nanopc-t4 linux-image-7.3.0-nanopc-t4 linux-image-7.3.0-nanopc-t4-dbg linux-libc-dev
+Built-For-Profiles: derivative.ubuntu noudeb
+Architecture: arm64
+Version: 7.3.0-3
+Distribution: resolute
+Urgency: low
+Maintainer: NanoPC-T4 build <nanopc-t4@localhost>
+Changed-By: NanoPC-T4 build <nanopc-t4@localhost>
+Description:
+ linux-headers-7.3.0-nanopc-t4 - Linux kernel headers for 7.3.0-nanopc-t4 on arm64
+ linux-image-7.3.0-nanopc-t4 - Linux kernel, version 7.3.0-nanopc-t4
+ linux-image-7.3.0-nanopc-t4-dbg - Linux kernel debugging symbols for 7.3.0-nanopc-t4
+ linux-libc-dev - Linux support headers for userspace development
+Changes:
+ linux-upstream (7.3.0-3) resolute; urgency=low
+ .
+   * Custom built Linux kernel.
+Checksums-Sha1:
+ 8ed5045cfa80ce7a5445b05943b71af5332b7d0e 9657880 linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
+ b2598e03be4c459e4a3440d8149b16bef9d86e7c 108819830 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-3_arm64.deb
+ d6f714245a407609017de700d3002f0337d521f2 38070074 linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
+ 88c67f058ec67190731b618ce92c5bf5fed6d5a9 1541240 linux-libc-dev_7.3.0-3_arm64.deb
+ 1386ed73452714afa6fc5b45c6f212b76f48784a 7633 linux-upstream_7.3.0-3_arm64.buildinfo
+Checksums-Sha256:
+ 0208e3573cfa344ad3f10b76bd50304bb72cd648150f5bac6b29c145b1a9b98d 9657880 linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
+ e709b8465c8d498665c3c659c3ebf63d666302c8233641d5583ff60f6eb33c81 108819830 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-3_arm64.deb
+ c9cacfc91372d51c46457a54c6100f4e55826b0ec5abe4795807ae4b1c06254b 38070074 linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
+ d27b2300b3eedb3c76baef1428f41bbfb3693e781b8cd8102147d6b39b427b4f 1541240 linux-libc-dev_7.3.0-3_arm64.deb
+ 38fb9cafe9a62c175a3cf037df9f015fab3b34e4defe5a64b31bdf4884581594 7633 linux-upstream_7.3.0-3_arm64.buildinfo
+Files:
+ 351ad96e1018247713c85a82510d1e6d 9657880 kernel optional linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
+ 9b7c6cda6e615f4062f0eb913f9349a9 108819830 debug optional linux-image-7.3.0-nanopc-t4-dbg_7.3.0-3_arm64.deb
+ c2beb4301c750c641c59dd5f192274a5 38070074 kernel optional linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
+ 33d8f0fc4bbcaae5e59c7c6e897dd193 1541240 devel optional linux-libc-dev_7.3.0-3_arm64.deb
+ b05a563505ef99e184130d527ccd85cf 7633 kernel optional linux-upstream_7.3.0-3_arm64.buildinfo

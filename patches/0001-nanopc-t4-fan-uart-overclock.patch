@@ -1,0 +1,208 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
+@@ -15,6 +15,11 @@
+ 	model = "FriendlyElec NanoPC-T4";
+ 	compatible = "friendlyarm,nanopc-t4", "rockchip,rk3399";
+ 
++	chosen {
++		/* 3-pin debug UART, 115200 8N1 instead of the 1.5 Mbaud default */
++		stdout-path = "serial2:115200n8";
++	};
++
+ 	vcc12v0_sys: regulator-vcc12v0-sys {
+ 		compatible = "regulator-fixed";
+ 		regulator-always-on;
+@@ -56,10 +61,11 @@
+ 	fan: pwm-fan {
+ 		compatible = "pwm-fan";
+ 		/*
+-		 * With 20KHz PWM and an EVERCOOL EC4007H12SA fan, these levels
+-		 * work out to 0, ~1200, ~3000, and 5000RPM respectively.
++		 * 20 kHz PWM.  This fan does not start below ~15% duty, so the
++		 * first active level is 38/255.  State 0 keeps it off below
++		 * 48 C; states 1..11 ramp linearly to full speed at 70 C.
+ 		 */
+-		cooling-levels = <0 12 18 255>;
++		cooling-levels = <0 38 60 81 103 125 147 168 190 212 233 255>;
+ 		#cooling-cells = <2>;
+ 		fan-supply = <&vcc12v0_sys>;
+ 		pwms = <&pwm1 0 50000 0>;
+@@ -68,29 +74,130 @@
+ 
+ &cpu_thermal {
+ 	trips {
+-		cpu_warm: cpu_warm {
+-			temperature = <55000>;
+-			hysteresis = <2000>;
++		fan_48: fan-48 {
++			temperature = <48000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_50: fan-50 {
++			temperature = <50000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_52: fan-52 {
++			temperature = <52000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_54: fan-54 {
++			temperature = <54000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_56: fan-56 {
++			temperature = <56000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_58: fan-58 {
++			temperature = <58000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_60: fan-60 {
++			temperature = <60000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_64: fan-64 {
++			temperature = <64000>;
++			hysteresis = <1000>;
+ 			type = "active";
+ 		};
+ 
+-		cpu_hot: cpu_hot {
+-			temperature = <65000>;
+-			hysteresis = <2000>;
++		fan_66: fan-66 {
++			temperature = <66000>;
++			hysteresis = <1000>;
+ 			type = "active";
+ 		};
++
++		fan_68: fan-68 {
++			temperature = <68000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_70: fan-70 {
++			temperature = <70000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
+ 	};
+ 
+ 	cooling-maps {
+-		map2 {
+-			trip = <&cpu_warm>;
+-			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
++		map_fan48 {
++			trip = <&fan_48>;
++			cooling-device = <&fan 1 1>;
+ 		};
+ 
+-		map3 {
+-			trip = <&cpu_hot>;
+-			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
++		map_fan50 {
++			trip = <&fan_50>;
++			cooling-device = <&fan 2 2>;
+ 		};
++
++		map_fan52 {
++			trip = <&fan_52>;
++			cooling-device = <&fan 3 3>;
++		};
++
++		map_fan54 {
++			trip = <&fan_54>;
++			cooling-device = <&fan 4 4>;
++		};
++
++		map_fan56 {
++			trip = <&fan_56>;
++			cooling-device = <&fan 5 5>;
++		};
++
++		map_fan58 {
++			trip = <&fan_58>;
++			cooling-device = <&fan 6 6>;
++		};
++
++		map_fan60 {
++			trip = <&fan_60>;
++			cooling-device = <&fan 7 7>;
++		};
++
++		map_fan64 {
++			trip = <&fan_64>;
++			cooling-device = <&fan 8 8>;
++		};
++
++		map_fan66 {
++			trip = <&fan_66>;
++			cooling-device = <&fan 9 9>;
++		};
++
++		map_fan68 {
++			trip = <&fan_68>;
++			cooling-device = <&fan 10 10>;
++		};
++
++		map_fan70 {
++			trip = <&fan_70>;
++			cooling-device = <&fan 11 11>;
++		};
++
+ 	};
+ };
+ 
+@@ -135,3 +242,35 @@
+ 	gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
+ 	vin-supply = <&vcc5v0_sys>;
+ };
++
++/*
++ * Overclock, after QiuSimons/R4S-OpenWrt 991-rockchip-rk3399-overclock-to-2.2-1.8-GHz:
++ * little cores up to 1.8 GHz, big cores up to 2.208 GHz.  The RK3399 PLL
++ * tables in drivers/clk/rockchip/clk-rk3399.c already carry both rates, and
++ * vdd_cpu_l (RK808 DCDC2, 0.75-1.35 V) / vdd_cpu_b (SYR827, 0.7125-1.5 V)
++ * can supply the voltages below.  Overclocking is unsupported by Rockchip
++ * and runs the SoC out of spec.
++ */
++&cluster0_opp {
++	opp06 {
++		opp-hz = /bits/ 64 <1608000000>;
++		opp-microvolt = <1200000 1200000 1250000>;
++	};
++
++	opp07 {
++		opp-hz = /bits/ 64 <1800000000>;
++		opp-microvolt = <1250000 1250000 1250000>;
++	};
++};
++
++&cluster1_opp {
++	opp08 {
++		opp-hz = /bits/ 64 <2016000000>;
++		opp-microvolt = <1250000 1250000 1275000>;
++	};
++
++	opp09 {
++		opp-hz = /bits/ 64 <2208000000>;
++		opp-microvolt = <1275000 1275000 1275000>;
++	};
++};

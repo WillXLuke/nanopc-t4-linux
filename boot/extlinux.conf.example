@@ -1,0 +1,24 @@
+# /boot/extlinux/extlinux.conf — NanoPC-T4, mainline 7.3
+# Install: dpkg -i linux-dtb-7.3.0-nanopc-t4_7.3.0-2_arm64.deb
+#   (provides /boot/dtb/rockchip/rk3399-nanopc-t4.dtb), then adjust root=
+#   to your rootfs PARTUUID.
+#
+# Serial console: ttyS2, 115200 8N1.
+
+default linux-7.3.0-nanopc-t4
+menu title NanoPC-T4 boot menu
+timeout 30
+
+label linux-7.3.0-nanopc-t4
+  menu label Linux 7.3.0-nanopc-t4
+  kernel /boot/vmlinuz-7.3.0-nanopc-t4
+  fdt /boot/dtb/rockchip/rk3399-nanopc-t4.dtb
+  append root=PARTUUID=00000000-0000-0000-0000-000000000000 rootwait rw \
+         console=ttyS2,115200n8 console=tty0
+
+label linux-7.3.0-nanopc-t4-fallback
+  menu label Linux 7.3.0-nanopc-t4 (single user, debug)
+  kernel /boot/vmlinuz-7.3.0-nanopc-t4
+  fdt /boot/dtb/rockchip/rk3399-nanopc-t4.dtb
+  append root=PARTUUID=00000000-0000-0000-0000-000000000000 rootwait rw \
+         console=ttyS2,115200n8 earlycon single

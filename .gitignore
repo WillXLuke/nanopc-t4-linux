@@ -1,0 +1,9 @@
+# Build inputs/outputs (see README "Reproducing")
+/src/
+/build/
+/tools/
+/logs/
+*,cover
+*.deb
+*.dsc
+*.tar.xz

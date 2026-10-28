@@ -1,0 +1,27 @@
+# NanoPC-T4 (RK3399) board fragment on top of arch/arm64/configs/defconfig
+# Applied with scripts/kconfig/merge_config.sh -m
+
+# Identifiable kernel release / hostname
+CONFIG_LOCALVERSION="-nanopc-t4"
+CONFIG_DEFAULT_HOSTNAME="nanopc-t4"
+
+# Keep the boot path built in (SD/eMMC already =y in defconfig), so
+# root-on-NVMe / NFS-root does not depend on the initramfs
+CONFIG_PCIE_ROCKCHIP_HOST=y
+CONFIG_PHY_ROCKCHIP_PCIE=y
+CONFIG_NVME_CORE=y
+CONFIG_BLK_DEV_NVME=y
+CONFIG_STMMAC_ETH=y
+CONFIG_STMMAC_PLATFORM=y
+CONFIG_DWMAC_ROCKCHIP=y
+
+# Board extras that defconfig leaves out (all as modules)
+CONFIG_PHY_ROCKCHIP_DP=m
+CONFIG_ZRAM=m
+CONFIG_F2FS_FS=m
+CONFIG_XFS_FS=m
+CONFIG_NTFS3_FS=m
+CONFIG_EXFAT_FS=m
+CONFIG_NLS_UTF8=m
+CONFIG_DM_CRYPT=m
+CONFIG_DM_VERITY=m
