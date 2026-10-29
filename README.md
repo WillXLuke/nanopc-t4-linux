@@ -17,24 +17,24 @@ packaged as Debian packages with the in-tree `scripts/package` machinery.
 | `pkgs/sha256sums.txt`, `pkgs/config-7.3.0-nanopc-t4` | checksums and the exact kernel config |
 
 Prebuilt packages (`linux-image`, `-dbg`, `-headers`, `linux-dtb`, `linux-libc-dev`,
-version `7.3.0-7`, arm64) are attached to the release:
-<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-7>
+version `7.3.0-8`, arm64) are attached to the release:
+<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-8>
 
 ## 1. Artifacts (`pkgs/`)
 
 | File | Size | Purpose |
 |---|---|---|
-| `linux-image-7.3.0-nanopc-t4_7.3.0-7_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
-| `linux-headers-7.3.0-nanopc-t4_7.3.0-7_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
-| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-7_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
-| `linux-dtb-7.3.0-nanopc-t4_7.3.0-7_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
-| `linux-libc-dev_7.3.0-7_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
+| `linux-image-7.3.0-nanopc-t4_7.3.0-8_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
+| `linux-headers-7.3.0-nanopc-t4_7.3.0-8_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
+| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-8_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
+| `linux-dtb-7.3.0-nanopc-t4_7.3.0-8_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
+| `linux-libc-dev_7.3.0-8_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
 | `config-7.3.0-nanopc-t4` | 320 KB | the exact `.config` used |
-| `linux-upstream_7.3.0-7_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
+| `linux-upstream_7.3.0-8_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
 | `sha256sums.txt` | | checksums of all packages |
 
 Kernel release string: **7.3.0-nanopc-t4** (`CONFIG_LOCALVERSION="-nanopc-t4"`),
-Debian version `7.3.0-7`.
+Debian version `7.3.0-8`.
 
 ## 2. Build summary
 
@@ -100,9 +100,9 @@ policy routing (`IP_MULTIPLE_TABLES`/`IPV6_MULTIPLE_TABLES`/`FIB_RULES`).
 ## 5. Installing on the board
 
 ```sh
-sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-7_arm64.deb \
-             linux-dtb-7.3.0-nanopc-t4_7.3.0-7_arm64.deb \
-             linux-headers-7.3.0-nanopc-t4_7.3.0-7_arm64.deb
+sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-8_arm64.deb \
+             linux-dtb-7.3.0-nanopc-t4_7.3.0-8_arm64.deb \
+             linux-headers-7.3.0-nanopc-t4_7.3.0-8_arm64.deb
 sudo apt-get -f install      # only if initramfs-tools/kmod are missing
 ```
 
@@ -280,14 +280,32 @@ lowest duty the fan can actually run at, and reaches 100 % at 78 °C.
 | Trip | default | this build |
 |---|---|---|
 | `cpu_alert0` (big cores throttled) | 70 °C | **84 °C** |
-| `cpu_alert1` (all cores throttled) | 75 °C | **92 °C** |
-| `cpu_crit` (shutdown) | 95 °C | **98 °C** |
+| `cpu_alert1` (all cores throttled) | 75 °C | **90 °C** |
+| `cpu_crit` (shutdown) | 95 °C | **96 °C** |
 
 Together this lets the big cluster hold 2.208 GHz up to 84 °C instead of being
 capped to 2.016 GHz at 70 °C, while the fan is already at full speed from 78 °C.
-It is well outside Rockchip's recommended envelope (SoC `tshut` default is
-95 °C): the board runs hotter, and `98 °C` critical gives only ~6 °C headroom
-above the throttling trip. Watch `thermal_zone0/temp`.
+It is outside Rockchip's recommended envelope (SoC `tshut` default is 95 °C):
+the board runs hotter and the 96 °C critical trip leaves only 6 °C headroom
+above the 90 °C throttling point. Watch `thermal_zone0/temp`.
+
+**Fan tachometer.** The fan's tach wire (GPIO2_A6) is wired to the `pwm-fan`
+node, so the driver counts pulses and reports RPM:
+
+```dts
+interrupts = <RK_PA6 IRQ_TYPE_EDGE_FALLING>;   /* GPIO2_A6 */
+pulses-per-revolution = <2>;
+```
+
+```sh
+cat /sys/class/hwmon/hwmon*/fan1_input     # RPM, updates once a second
+sensors | grep -i fan                      # pwmfan-isa-0000: fan1: ... RPM
+```
+
+RPM is sampled over a one-second window, so it reads 0 while the fan is stopped
+and lags one step behind sudden PWM changes. `pulses-per-revolution = 2` is
+correct for the usual 2-pulse fans; raise it if the reading is exactly double
+the real speed.
 
 **Console baud.** `chosen/stdout-path = "serial2:115200n8"` (upstream: 1.5 Mbaud).
 U-Boot still talks at its own baud rate; set `CONFIG_BAUDRATE=115200` there (or

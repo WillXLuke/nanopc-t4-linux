@@ -12,7 +12,7 @@
  	vcc12v0_sys: regulator-vcc12v0-sys {
  		compatible = "regulator-fixed";
  		regulator-always-on;
-@@ -56,10 +61,11 @@
+@@ -56,41 +61,156 @@
  	fan: pwm-fan {
  		compatible = "pwm-fan";
  		/*
@@ -27,15 +27,22 @@
  		#cooling-cells = <2>;
  		fan-supply = <&vcc12v0_sys>;
  		pwms = <&pwm1 0 50000 0>;
-@@ -67,30 +73,137 @@
++
++		/* fan tachometer: GPIO2_A6, 2 pulses per revolution */
++		interrupt-parent = <&gpio2>;
++		interrupts = <RK_PA6 IRQ_TYPE_EDGE_FALLING>;
++		pulses-per-revolution = <2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&fan_tach>;
+ 	};
  };
  
  &cpu_thermal {
 +	/*
 +	 * Raised from the RK3399 defaults (70/75/95 C) so the big cores can hold
 +	 * 2.208 GHz while the fan ramps: active fan steps 60..78 C, CPU
-+	 * throttling only at 84 C (big cluster) and 92 C (all cores), shutdown
-+	 * at 98 C.  Out of spec; watch the temperatures.
++	 * throttling only at 84 C (big cluster) and 90 C (all cores), shutdown
++	 * at 96 C.  Out of spec; watch the temperatures.
 +	 */
  	trips {
 -		cpu_warm: cpu_warm {
@@ -68,14 +75,17 @@
 +		fan_68: fan-68 {
 +			temperature = <68000>;
 +			hysteresis = <1000>;
-+			type = "active";
-+		};
-+
+ 			type = "active";
+ 		};
+ 
+-		cpu_hot: cpu_hot {
+-			temperature = <65000>;
+-			hysteresis = <2000>;
 +		fan_70: fan-70 {
 +			temperature = <70000>;
 +			hysteresis = <1000>;
-+			type = "active";
-+		};
+ 			type = "active";
+ 		};
 +
 +		fan_72: fan-72 {
 +			temperature = <72000>;
@@ -86,17 +96,14 @@
 +		fan_74: fan-74 {
 +			temperature = <74000>;
 +			hysteresis = <1000>;
- 			type = "active";
- 		};
- 
--		cpu_hot: cpu_hot {
--			temperature = <65000>;
--			hysteresis = <2000>;
++			type = "active";
++		};
++
 +		fan_76: fan-76 {
 +			temperature = <76000>;
 +			hysteresis = <1000>;
- 			type = "active";
- 		};
++			type = "active";
++		};
 +
 +		fan_78: fan-78 {
 +			temperature = <78000>;
@@ -109,11 +116,11 @@
 +		};
 +
 +		cpu_alert1 {
-+			temperature = <92000>;
++			temperature = <90000>;
 +		};
 +
 +		cpu_crit {
-+			temperature = <98000>;
++			temperature = <96000>;
 +		};
  	};
  
@@ -139,15 +146,12 @@
 +		map_fan66 {
 +			trip = <&fan_66>;
 +			cooling-device = <&fan 4 4>;
- 		};
- 
--		map3 {
--			trip = <&cpu_hot>;
--			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
++		};
++
 +		map_fan68 {
 +			trip = <&fan_68>;
 +			cooling-device = <&fan 5 5>;
- 		};
++		};
 +
 +		map_fan70 {
 +			trip = <&fan_70>;
@@ -162,12 +166,15 @@
 +		map_fan74 {
 +			trip = <&fan_74>;
 +			cooling-device = <&fan 8 8>;
-+		};
-+
+ 		};
+ 
+-		map3 {
+-			trip = <&cpu_hot>;
+-			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
 +		map_fan76 {
 +			trip = <&fan_76>;
 +			cooling-device = <&fan 9 9>;
-+		};
+ 		};
 +
 +		map_fan78 {
 +			trip = <&fan_78>;
@@ -177,7 +184,20 @@
  	};
  };
  
-@@ -135,3 +248,35 @@
+@@ -101,6 +221,12 @@
+ };
+ 
+ &pinctrl {
++	fan {
++		fan_tach: fan-tach {
++			rockchip,pins = <2 RK_PA6 RK_FUNC_GPIO &pcfg_pull_up>;
++		};
++	};
++
+ 	ir {
+ 		ir_rx: ir-rx {
+ 			/* external pullup to VCC3V3_SYS, despite being 1.8V :/ */
+@@ -135,3 +261,35 @@
  	gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
  	vin-supply = <&vcc5v0_sys>;
  };

@@ -1,5 +1,5 @@
-f1f0e4993e9424d218fcbdd58a4603bf54329761210cc2a1c3c0ecc71357b6a3  ./linux-dtb-7.3.0-nanopc-t4_7.3.0-7_arm64.deb
-bf40b565e513a00d6f4690c015adafd9c6b845540a785ecb2910932961a1893f  ./linux-headers-7.3.0-nanopc-t4_7.3.0-7_arm64.deb
-8a31bd2fd9dbdc4bba8f18f341e8929c6cbc5c377554e0d92e46c90034339315  ./linux-image-7.3.0-nanopc-t4-dbg_7.3.0-7_arm64.deb
-6f69ac9a5459089d663882103f784bd22cb0d6a1fc2454580f7f21c090e7c967  ./linux-image-7.3.0-nanopc-t4_7.3.0-7_arm64.deb
-f6821242046330d75fb8af2cabb4c6db76ef1b66b0a4614ee0d1df1139082022  ./linux-libc-dev_7.3.0-7_arm64.deb
+2035e12932e495670a7c0c252737ee6a98135dcefa36cca33768f08ed0e470a3  ./linux-dtb-7.3.0-nanopc-t4_7.3.0-8_arm64.deb
+9e0fd899ae4e65b6032872c57b82c461b1045ecdaf9668b15ed1e2248c024d5f  ./linux-headers-7.3.0-nanopc-t4_7.3.0-8_arm64.deb
+0c93bb2c0a23f62bc424014b2e9fec558177e70d4f48135b64144f5121195877  ./linux-image-7.3.0-nanopc-t4-dbg_7.3.0-8_arm64.deb
+ef546d0424193d0fade8f65b7373d1a5099d514053ed19199e64f85a55e5c3f4  ./linux-image-7.3.0-nanopc-t4_7.3.0-8_arm64.deb
+95e5aa12fab3dee674e8bdf0d4f6f09e07ec709a1f3d4b0ab7064b8271345996  ./linux-libc-dev_7.3.0-8_arm64.deb
