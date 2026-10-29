@@ -25,3 +25,33 @@ CONFIG_EXFAT_FS=m
 CONFIG_NLS_UTF8=m
 CONFIG_DM_CRYPT=m
 CONFIG_DM_VERITY=m
+
+# netfilter / nftables: needed by tailscale (and iptables compatibility).
+# NF_TABLES itself stays a module; the inet/ipv4/ipv6/netdev table families are
+# bools and are compiled into nf_tables.ko.
+CONFIG_NF_TABLES=m
+CONFIG_NF_TABLES_INET=y
+CONFIG_NF_TABLES_IPV4=y
+CONFIG_NF_TABLES_IPV6=y
+CONFIG_NF_TABLES_NETDEV=y
+CONFIG_NF_NAT=m
+CONFIG_NF_CONNTRACK=m
+CONFIG_NFT_CT=m
+CONFIG_NFT_NAT=m
+CONFIG_NFT_MASQ=m
+CONFIG_NFT_REDIR=m
+CONFIG_NFT_COUNTER=m
+
+# classic iptables (iptables-legacy); iptables-nft only needs the above
+CONFIG_NETFILTER_XTABLES=m
+CONFIG_NETFILTER_XTABLES_LEGACY=y
+CONFIG_IP_NF_IPTABLES=m
+CONFIG_IP_NF_IPTABLES_LEGACY=m
+CONFIG_IP_NF_FILTER=m
+CONFIG_IP_NF_NAT=m
+CONFIG_IP_NF_MANGLE=m
+CONFIG_IP_NF_TARGET_MASQUERADE=m
+CONFIG_NETFILTER_XT_MATCH_CONNTRACK=m
+
+# NVMe drive temperatures via hwmon ("nvme" sensors entry)
+CONFIG_NVME_HWMON=y

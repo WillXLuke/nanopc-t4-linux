@@ -17,24 +17,24 @@ packaged as Debian packages with the in-tree `scripts/package` machinery.
 | `pkgs/sha256sums.txt`, `pkgs/config-7.3.0-nanopc-t4` | checksums and the exact kernel config |
 
 Prebuilt packages (`linux-image`, `-dbg`, `-headers`, `linux-dtb`, `linux-libc-dev`,
-version `7.3.0-3`, arm64) are attached to the release:
-<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-3>
+version `7.3.0-4`, arm64) are attached to the release:
+<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-4>
 
 ## 1. Artifacts (`pkgs/`)
 
 | File | Size | Purpose |
 |---|---|---|
-| `linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
-| `linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
-| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-3_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
-| `linux-dtb-7.3.0-nanopc-t4_7.3.0-3_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
-| `linux-libc-dev_7.3.0-3_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
+| `linux-image-7.3.0-nanopc-t4_7.3.0-4_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
+| `linux-headers-7.3.0-nanopc-t4_7.3.0-4_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
+| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-4_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
+| `linux-dtb-7.3.0-nanopc-t4_7.3.0-4_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
+| `linux-libc-dev_7.3.0-4_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
 | `config-7.3.0-nanopc-t4` | 320 KB | the exact `.config` used |
-| `linux-upstream_7.3.0-3_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
+| `linux-upstream_7.3.0-4_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
 | `sha256sums.txt` | | checksums of all packages |
 
 Kernel release string: **7.3.0-nanopc-t4** (`CONFIG_LOCALVERSION="-nanopc-t4"`),
-Debian version `7.3.0-3`.
+Debian version `7.3.0-4`.
 
 ## 2. Build summary
 
@@ -89,14 +89,17 @@ Modules (`=m`): `DRM_ROCKCHIP` (+ `dw-hdmi`, `dw-mipi-dsi`), `DRM_PANFROST`,
 `VIDEO_HANTRO` (VPU), `SND_SOC_ES8316` (codec), `BRCMFMAC` + `BT_HCIUART`/`BT_BCM`
 (AP6356S), `TYPEC_FUSB302` + `PHY_ROCKCHIP_TYPEC`, `RTC_DRV_RK808`,
 `SENSORS_PWM_FAN` (fan), `IR_GPIO_CIR`, `ZRAM`, `F2FS_FS`, `XFS_FS`,
-`NTFS3_FS`, `EXFAT_FS`, `DM_CRYPT`, `DM_VERITY`, `ROCKCHIP_THERMAL`.
+`NTFS3_FS`, `EXFAT_FS`, `DM_CRYPT`, `DM_VERITY`, `ROCKCHIP_THERMAL`,
+`NF_TABLES` (with inet/ipv4/ipv6/netdev families built in), `NF_NAT`/`NF_CONNTRACK`,
+`NFT_CT`/`NFT_NAT`/`NFT_MASQ`/`NFT_REDIR`/`NFT_COUNTER`, and the classic
+`IP_NF_*` iptables stack. Built in: `NVME_HWMON` (per-drive temperature sensors).
 
 ## 5. Installing on the board
 
 ```sh
-sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb \
-             linux-dtb-7.3.0-nanopc-t4_7.3.0-3_arm64.deb \
-             linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
+sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-4_arm64.deb \
+             linux-dtb-7.3.0-nanopc-t4_7.3.0-4_arm64.deb \
+             linux-headers-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
 sudo apt-get -f install      # only if initramfs-tools/kmod are missing
 ```
 
@@ -128,7 +131,7 @@ label linux-7.3.0-nanopc-t4
 `/usr/lib/linux-image-7.3.0-nanopc-t4/rockchip/`; copy it to `/boot/dtb/`.)
 
 * Serial console on the NanoPC-T4 is `ttyS2` at **115200** 8N1 (this build
-  overrides the upstream `stdout-path` default of 1.5 Mbaud, see §10).
+  overrides the upstream `stdout-path` default of 1.5 Mbaud, see §11).
 * `vmlinuz-*` is `Image.gz`. Mainline U-Boot's `booti` decompresses it; a
   bootloader without gzip support needs the raw `Image`
   (`build/arch/arm64/boot/Image`) instead.
@@ -177,7 +180,40 @@ Bluetooth uses `BT_HCIUART_BCM` with the matching `.hcd` file.
 * No initramfs is built here; `initramfs-tools` on the target does that from
   the `postinst` hook.
 
-## 9. Reproducing
+## 9. Tailscale and NVMe temperatures
+
+**Tailscale (nftables).** The netfilter stack is modular, so userspace has to be
+able to load it (udev does this automatically):
+
+```sh
+sudo modprobe nf_tables nf_nat nf_conntrack nft_ct nft_masq nft_nat nft_counter
+sudo tailscale up            # or restart the daemon
+sudo nft list tables         # ts_* tables appear once tailscale is up
+sudo nft list table inet ts_state     # sanity check
+```
+
+`nf_tables` must be loadable *and* have the `inet` family compiled in
+(`CONFIG_NF_TABLES_INET=y` — a bool, part of `nf_tables.ko`); without it
+`nft add table inet ...` fails with "Operation not supported". For legacy
+iptables (`iptables-legacy`, `iptables -t nat ...`) the `IP_NF_*` and
+`xtables-legacy` modules are included too; `iptables-nft` needs only the first
+line above.
+
+**NVMe temperature.** `CONFIG_NVME_HWMON=y` exposes each namespace controller as
+a hwmon device:
+
+```sh
+grep . /sys/class/hwmon/hwmon*/name          # one "nvme" per drive
+cat /sys/class/hwmon/hwmon*/temp1_input      # millidegrees C
+sensors                                       # lm-sensors >= 3.6: nvme-pci-0100
+```
+
+`temp1_input` is the composite sensor; drives with multiple sensors add
+`temp2_input`/`temp3_input`. If `sensors` shows nothing, check that
+`/sys/class/hwmon/hwmonX/name` exists — a missing `nvme` entry means the
+running DTB/kernel predates this build.
+
+## 10. Reproducing
 
 ```sh
 scripts/build-kernel-deb.sh          # VER=7.3 JOBS=16 DEB_VERSION=7.3.0-1
@@ -196,7 +232,7 @@ Needs ~6 GB disk (`src/` 1.8 GB + `build/` 3.6 GB) and the cross toolchain
 installed, plain
 `make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg` works as usual.
 
-## 10. Board tuning in this build
+## 11. Board tuning in this build
 
 Applied by `patches/0001-nanopc-t4-fan-uart-overclock.patch` to
 `arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts` (no kernel code changes):

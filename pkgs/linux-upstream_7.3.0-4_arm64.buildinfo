@@ -2,25 +2,25 @@ Format: 1.0
 Source: linux-upstream
 Binary: linux-headers-7.3.0-nanopc-t4 linux-image-7.3.0-nanopc-t4 linux-image-7.3.0-nanopc-t4-dbg linux-libc-dev
 Architecture: arm64
-Version: 7.3.0-3
+Version: 7.3.0-4
 Checksums-Md5:
- 351ad96e1018247713c85a82510d1e6d 9657880 linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
- 9b7c6cda6e615f4062f0eb913f9349a9 108819830 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-3_arm64.deb
- c2beb4301c750c641c59dd5f192274a5 38070074 linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
- 33d8f0fc4bbcaae5e59c7c6e897dd193 1541240 linux-libc-dev_7.3.0-3_arm64.deb
+ 77e95eb6794bf5bcab710c2031087b3c 9658738 linux-headers-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
+ a20a08ec55664ad093287e9005b3a2f9 109529870 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-4_arm64.deb
+ 24173d7d87fae8801bfc7f36248d7f8d 38219066 linux-image-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
+ f23da87f70846010037aa1a68906d893 1541372 linux-libc-dev_7.3.0-4_arm64.deb
 Checksums-Sha1:
- 8ed5045cfa80ce7a5445b05943b71af5332b7d0e 9657880 linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
- b2598e03be4c459e4a3440d8149b16bef9d86e7c 108819830 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-3_arm64.deb
- d6f714245a407609017de700d3002f0337d521f2 38070074 linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
- 88c67f058ec67190731b618ce92c5bf5fed6d5a9 1541240 linux-libc-dev_7.3.0-3_arm64.deb
+ 9e4f1f99c719610ffc49ae76516b97e34310094e 9658738 linux-headers-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
+ 4f21edbd8cab1b603c62482a325dabee28e9b2c8 109529870 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-4_arm64.deb
+ 3ff6e0a36c858a7b1d941742d66f574b011ad295 38219066 linux-image-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
+ f74786a284bd016ddf213c375e8e83f4228e7e6e 1541372 linux-libc-dev_7.3.0-4_arm64.deb
 Checksums-Sha256:
- 0208e3573cfa344ad3f10b76bd50304bb72cd648150f5bac6b29c145b1a9b98d 9657880 linux-headers-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
- e709b8465c8d498665c3c659c3ebf63d666302c8233641d5583ff60f6eb33c81 108819830 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-3_arm64.deb
- c9cacfc91372d51c46457a54c6100f4e55826b0ec5abe4795807ae4b1c06254b 38070074 linux-image-7.3.0-nanopc-t4_7.3.0-3_arm64.deb
- d27b2300b3eedb3c76baef1428f41bbfb3693e781b8cd8102147d6b39b427b4f 1541240 linux-libc-dev_7.3.0-3_arm64.deb
+ 259299a6ee33fa44b76ae2dad4fefbd2c912f91500e08e62c53a066d87df5490 9658738 linux-headers-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
+ db7d16b036726fe29eae43a77c7f7844733fc0d15b4c35881a903da9889cfc13 109529870 linux-image-7.3.0-nanopc-t4-dbg_7.3.0-4_arm64.deb
+ 9db503e7fec1725f8a7bf4a3e9e0f2feb7ac5048f1fe1bac199864b9baab50a8 38219066 linux-image-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
+ b4f4943c56b16fa05ff6e7029cf1a4cfad8125906d53b8f18f6793937acc91f2 1541372 linux-libc-dev_7.3.0-4_arm64.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Wed, 28 Oct 2026 23:01:05 +0800
+Build-Date: Thu, 29 Oct 2026 22:38:30 +0800
 Installed-Build-Depends:
  base-files (= 14ubuntu6.2),
  base-passwd (= 3.6.8),
@@ -193,4 +193,4 @@ Environment:
  DEB_BUILD_OPTIONS="parallel=1"
  DEB_BUILD_PROFILES="derivative.ubuntu noudeb"
  LANG="C.UTF-8"
- SOURCE_DATE_EPOCH="1793199543"
+ SOURCE_DATE_EPOCH="1793284589"
