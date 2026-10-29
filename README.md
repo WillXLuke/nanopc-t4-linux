@@ -17,24 +17,24 @@ packaged as Debian packages with the in-tree `scripts/package` machinery.
 | `pkgs/sha256sums.txt`, `pkgs/config-7.3.0-nanopc-t4` | checksums and the exact kernel config |
 
 Prebuilt packages (`linux-image`, `-dbg`, `-headers`, `linux-dtb`, `linux-libc-dev`,
-version `7.3.0-5`, arm64) are attached to the release:
-<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-5>
+version `7.3.0-6`, arm64) are attached to the release:
+<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-6>
 
 ## 1. Artifacts (`pkgs/`)
 
 | File | Size | Purpose |
 |---|---|---|
-| `linux-image-7.3.0-nanopc-t4_7.3.0-5_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
-| `linux-headers-7.3.0-nanopc-t4_7.3.0-5_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
-| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-5_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
-| `linux-dtb-7.3.0-nanopc-t4_7.3.0-5_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
-| `linux-libc-dev_7.3.0-5_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
+| `linux-image-7.3.0-nanopc-t4_7.3.0-6_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
+| `linux-headers-7.3.0-nanopc-t4_7.3.0-6_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
+| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-6_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
+| `linux-dtb-7.3.0-nanopc-t4_7.3.0-6_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
+| `linux-libc-dev_7.3.0-6_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
 | `config-7.3.0-nanopc-t4` | 320 KB | the exact `.config` used |
-| `linux-upstream_7.3.0-5_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
+| `linux-upstream_7.3.0-6_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
 | `sha256sums.txt` | | checksums of all packages |
 
 Kernel release string: **7.3.0-nanopc-t4** (`CONFIG_LOCALVERSION="-nanopc-t4"`),
-Debian version `7.3.0-5`.
+Debian version `7.3.0-6`.
 
 ## 2. Build summary
 
@@ -91,15 +91,18 @@ Modules (`=m`): `DRM_ROCKCHIP` (+ `dw-hdmi`, `dw-mipi-dsi`), `DRM_PANFROST`,
 `SENSORS_PWM_FAN` (fan), `IR_GPIO_CIR`, `ZRAM`, `F2FS_FS`, `XFS_FS`,
 `NTFS3_FS`, `EXFAT_FS`, `DM_CRYPT`, `DM_VERITY`, `ROCKCHIP_THERMAL`,
 `NF_TABLES` (with inet/ipv4/ipv6/netdev families built in), `NF_NAT`/`NF_CONNTRACK`,
-`NFT_CT`/`NFT_NAT`/`NFT_MASQ`/`NFT_REDIR`/`NFT_COUNTER`, and the classic
-`IP_NF_*` iptables stack. Built in: `NVME_HWMON` (per-drive temperature sensors).
+`NFT_CT`/`NFT_NAT`/`NFT_MASQ`/`NFT_REDIR`, the x_tables extensions tailscale needs
+(`NFT_COMPAT`, `xt_mark`, `xt_connmark`+`NF_CONNTRACK_MARK`, `xt_conntrack`,
+`xt_addrtype`, `xt_comment`, `xt_multiport`, `xt_TCPMSS`), and the classic
+`IP_NF_*` iptables stack. Built in: `NVME_HWMON` (per-drive temperature sensors),
+policy routing (`IP_MULTIPLE_TABLES`/`IPV6_MULTIPLE_TABLES`/`FIB_RULES`).
 
 ## 5. Installing on the board
 
 ```sh
-sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-5_arm64.deb \
-             linux-dtb-7.3.0-nanopc-t4_7.3.0-5_arm64.deb \
-             linux-headers-7.3.0-nanopc-t4_7.3.0-5_arm64.deb
+sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-6_arm64.deb \
+             linux-dtb-7.3.0-nanopc-t4_7.3.0-6_arm64.deb \
+             linux-headers-7.3.0-nanopc-t4_7.3.0-6_arm64.deb
 sudo apt-get -f install      # only if initramfs-tools/kmod are missing
 ```
 
@@ -182,36 +185,44 @@ Bluetooth uses `BT_HCIUART_BCM` with the matching `.hcd` file.
 
 ## 9. Tailscale and NVMe temperatures
 
-**Tailscale (nftables).** The netfilter stack is modular, so userspace has to be
-able to load it (udev does this automatically):
+**Tailscale netfilter/routing requirements.** Tailscale drives `iptables`
+(here: `iptables-nft`, i.e. the nf_tables backend) or `nft` directly, and needs
+policy routing for its fwmark rules. Everything below is enabled in this build:
+
+| Tailscale uses | Kernel option | Module / built-in |
+|---|---|---|
+| `iptables-nft` → x_tables compat | `NFT_COMPAT` | `nft_compat.ko` |
+| `-j MARK --set-mark v/mask`, `-m mark` | `NETFILTER_XT_MARK` (via `NETFILTER_XT_TARGET_MARK`) | `xt_mark.ko` (target rev 2 = value/mask, plus match) |
+| `-j CONNMARK --restore-mark --nfmask .. --ctmask ..`, `-m connmark` | `NETFILTER_XT_CONNMARK` (selects `NF_CONNTRACK_MARK`) | `xt_connmark.ko` (target rev 2/3 + match) |
+| `-m conntrack --ctstate` | `NETFILTER_XT_MATCH_CONNTRACK` | `xt_conntrack.ko` |
+| `-m addrtype`, `-m comment`, `-m multiport`, `-j TCPMSS` | `NETFILTER_XT_MATCH_ADDRTYPE`/`_COMMENT`/`_MULTIPORT`, `NETFILTER_XT_TARGET_TCPMSS` | `xt_addrtype.ko`, `xt_comment.ko`, `xt_multiport.ko`, `xt_TCPMSS.ko` |
+| `-j MASQUERADE`, `-t nat` | `NF_NAT` + `NFT_NAT`/`NFT_MASQ` (nft) and `IP_NF_NAT` + `NETFILTER_XT_TARGET_MASQUERADE` (legacy) | `nf_nat.ko`, `nft_nat.ko`, `nft_masq.ko`, `iptable_nat.ko`, `xt_MASQUERADE.ko` |
+| nf_tables core incl. inet/ipv4/ipv6/netdev families, counters | `NF_TABLES` (+ bools `NF_TABLES_INET/IPV4/IPV6/NETDEV`) | `nf_tables.ko` |
+| conntrack | `NF_CONNTRACK` | `nf_conntrack.ko` |
+| `ip rule add fwmark ... table 52` | `IP_ADVANCED_ROUTER`, `IP_MULTIPLE_TABLES`, `IPV6_MULTIPLE_TABLES`, `FIB_RULES` | built in |
+| `tailscale0` device | `TUN` | built in |
+| raw sockets for `TS_ENABLE_RAW_DISCO` | `PACKET` | built in |
+
+All of them autoload on demand through their `ipt_*`/`ip6t_*` module aliases;
+if something is missing, load it explicitly:
 
 ```sh
-sudo modprobe nf_tables nf_nat nf_conntrack nft_ct nft_masq nft_nat nft_counter
-sudo tailscale up            # or restart the daemon
-sudo nft list tables         # ts_* tables appear once tailscale is up
-sudo nft list table inet ts_state     # sanity check
+sudo modprobe nft_compat xt_mark xt_connmark xt_conntrack xt_addrtype \
+                xt_comment xt_multiport xt_TCPMSS nf_nat nf_conntrack nft_masq nft_nat
+sudo systemctl restart tailscaled
+sudo iptables -t mangle -S PREROUTING | head        # connmark rules present
+sudo ip rule | head                                # fwmark rules / table 52
 ```
 
-`nf_tables` must be loadable *and* have the `inet` family compiled in
-(`CONFIG_NF_TABLES_INET=y` — a bool, part of `nf_tables.ko`); without it
-`nft add table inet ...` fails with "Operation not supported". For legacy
-iptables (`iptables-legacy`, `iptables -t nat ...`) the `IP_NF_*` and
-`xtables-legacy` modules are included too; `iptables-nft` needs only the first
-line above.
+Two failure signatures this build fixes:
 
-**`-j MARK --set-mark 0x40000/0xff0000` fails?** iptables-nft translates the
-MARK target through `nft_compat`, so both `nft_compat.ko` and `xt_mark.ko`
-(match + target, target revision 2 carries the `value/mask` form) must exist:
-
-```sh
-sudo modprobe nft_compat xt_mark
-sudo iptables -t filter -A ts-forward -i tailscale0 -j MARK --set-mark 0x40000/0xff0000
-```
-
-The symptom of a missing module is `Warning: Extension MARK revision 0 not
-supported, missing kernel module?` followed by `MARK: bad value for option
-"--set-mark", or out of range` — revision 0 has no mask support, hence the
-rejection.
+- `Extension MARK revision 0 not supported, missing kernel module?` then
+  `MARK: bad value for option "--set-mark"` — MARK target rev 2 (the
+  `value/mask` form) lives in `xt_mark.ko`, reached through `nft_compat`.
+- `Extension connmark revision 0 not supported` then
+  `unknown option "--nfmask"` — `--nfmask`/`--ctmask` exist only in CONNMARK
+  target rev 2/3, which lives in `xt_connmark.ko`; `NF_CONNTRACK_MARK` must be
+  enabled for the ctmark storage itself.
 
 **NVMe temperature.** `CONFIG_NVME_HWMON=y` exposes each namespace controller as
 a hwmon device:

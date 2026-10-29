@@ -65,3 +65,16 @@ CONFIG_NETFILTER_XT_MATCH_MARK=m
 CONFIG_NETFILTER_XT_MATCH_MULTIPORT=m
 CONFIG_NETFILTER_XT_TARGET_TCPMSS=m
 CONFIG_NETFILTER_XT_MATCH_COMMENT=m
+
+# connmark / CONNMARK: tailscale's rp_filter workaround
+#   -m connmark ! --mark 0x0/0xff0000 -j CONNMARK --restore-mark --nfmask ..
+# xt_connmark.ko provides both the "connmark" match and the CONNMARK target
+# (rev 2/3 are the ones with --nfmask/--ctmask) and selects NF_CONNTRACK_MARK.
+CONFIG_NETFILTER_XT_CONNMARK=m
+CONFIG_NF_CONNTRACK_MARK=y
+CONFIG_NFT_COUNTER=m
+
+# policy routing: tailscale installs ip rules + table 52 for fwmark routing
+CONFIG_IP_ADVANCED_ROUTER=y
+CONFIG_IP_MULTIPLE_TABLES=y
+CONFIG_IPV6_MULTIPLE_TABLES=y
