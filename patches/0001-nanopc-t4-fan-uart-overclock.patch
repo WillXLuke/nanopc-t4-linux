@@ -19,59 +19,36 @@
 -		 * With 20KHz PWM and an EVERCOOL EC4007H12SA fan, these levels
 -		 * work out to 0, ~1200, ~3000, and 5000RPM respectively.
 +		 * 20 kHz PWM.  This fan does not start below ~15% duty, so the
-+		 * first active level is 38/255.  State 0 keeps it off below
-+		 * 48 C; states 1..11 ramp linearly to full speed at 70 C.
++		 * first active level is 38/255.  State 0 keeps it silent below
++		 * 60 C; states 1..10 ramp linearly to full speed at 78 C.
  		 */
 -		cooling-levels = <0 12 18 255>;
-+		cooling-levels = <0 38 60 81 103 125 147 168 190 212 233 255>;
++		cooling-levels = <0 38 62 86 110 134 159 183 207 231 255>;
  		#cooling-cells = <2>;
  		fan-supply = <&vcc12v0_sys>;
  		pwms = <&pwm1 0 50000 0>;
-@@ -68,29 +74,130 @@
+@@ -67,30 +73,137 @@
+ };
  
  &cpu_thermal {
++	/*
++	 * Raised from the RK3399 defaults (70/75/95 C) so the big cores can hold
++	 * 2.208 GHz while the fan ramps: active fan steps 60..78 C, CPU
++	 * throttling only at 84 C (big cluster) and 92 C (all cores), shutdown
++	 * at 98 C.  Out of spec; watch the temperatures.
++	 */
  	trips {
 -		cpu_warm: cpu_warm {
 -			temperature = <55000>;
 -			hysteresis = <2000>;
-+		fan_48: fan-48 {
-+			temperature = <48000>;
-+			hysteresis = <1000>;
-+			type = "active";
-+		};
-+
-+		fan_50: fan-50 {
-+			temperature = <50000>;
-+			hysteresis = <1000>;
-+			type = "active";
-+		};
-+
-+		fan_52: fan-52 {
-+			temperature = <52000>;
-+			hysteresis = <1000>;
-+			type = "active";
-+		};
-+
-+		fan_54: fan-54 {
-+			temperature = <54000>;
-+			hysteresis = <1000>;
-+			type = "active";
-+		};
-+
-+		fan_56: fan-56 {
-+			temperature = <56000>;
-+			hysteresis = <1000>;
-+			type = "active";
-+		};
-+
-+		fan_58: fan-58 {
-+			temperature = <58000>;
-+			hysteresis = <1000>;
-+			type = "active";
-+		};
-+
 +		fan_60: fan-60 {
 +			temperature = <60000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_62: fan-62 {
++			temperature = <62000>;
 +			hysteresis = <1000>;
 +			type = "active";
 +		};
@@ -79,17 +56,14 @@
 +		fan_64: fan-64 {
 +			temperature = <64000>;
 +			hysteresis = <1000>;
- 			type = "active";
- 		};
- 
--		cpu_hot: cpu_hot {
--			temperature = <65000>;
--			hysteresis = <2000>;
++			type = "active";
++		};
++
 +		fan_66: fan-66 {
 +			temperature = <66000>;
 +			hysteresis = <1000>;
- 			type = "active";
- 		};
++			type = "active";
++		};
 +
 +		fan_68: fan-68 {
 +			temperature = <68000>;
@@ -103,74 +77,107 @@
 +			type = "active";
 +		};
 +
++		fan_72: fan-72 {
++			temperature = <72000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		fan_74: fan-74 {
++			temperature = <74000>;
++			hysteresis = <1000>;
+ 			type = "active";
+ 		};
+ 
+-		cpu_hot: cpu_hot {
+-			temperature = <65000>;
+-			hysteresis = <2000>;
++		fan_76: fan-76 {
++			temperature = <76000>;
++			hysteresis = <1000>;
+ 			type = "active";
+ 		};
++
++		fan_78: fan-78 {
++			temperature = <78000>;
++			hysteresis = <1000>;
++			type = "active";
++		};
++
++		cpu_alert0 {
++			temperature = <84000>;
++		};
++
++		cpu_alert1 {
++			temperature = <92000>;
++		};
++
++		cpu_crit {
++			temperature = <98000>;
++		};
  	};
  
  	cooling-maps {
 -		map2 {
 -			trip = <&cpu_warm>;
 -			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-+		map_fan48 {
-+			trip = <&fan_48>;
++		map_fan60 {
++			trip = <&fan_60>;
 +			cooling-device = <&fan 1 1>;
++		};
++
++		map_fan62 {
++			trip = <&fan_62>;
++			cooling-device = <&fan 2 2>;
++		};
++
++		map_fan64 {
++			trip = <&fan_64>;
++			cooling-device = <&fan 3 3>;
++		};
++
++		map_fan66 {
++			trip = <&fan_66>;
++			cooling-device = <&fan 4 4>;
  		};
  
 -		map3 {
 -			trip = <&cpu_hot>;
 -			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
-+		map_fan50 {
-+			trip = <&fan_50>;
-+			cooling-device = <&fan 2 2>;
- 		};
-+
-+		map_fan52 {
-+			trip = <&fan_52>;
-+			cooling-device = <&fan 3 3>;
-+		};
-+
-+		map_fan54 {
-+			trip = <&fan_54>;
-+			cooling-device = <&fan 4 4>;
-+		};
-+
-+		map_fan56 {
-+			trip = <&fan_56>;
-+			cooling-device = <&fan 5 5>;
-+		};
-+
-+		map_fan58 {
-+			trip = <&fan_58>;
-+			cooling-device = <&fan 6 6>;
-+		};
-+
-+		map_fan60 {
-+			trip = <&fan_60>;
-+			cooling-device = <&fan 7 7>;
-+		};
-+
-+		map_fan64 {
-+			trip = <&fan_64>;
-+			cooling-device = <&fan 8 8>;
-+		};
-+
-+		map_fan66 {
-+			trip = <&fan_66>;
-+			cooling-device = <&fan 9 9>;
-+		};
-+
 +		map_fan68 {
 +			trip = <&fan_68>;
-+			cooling-device = <&fan 10 10>;
-+		};
++			cooling-device = <&fan 5 5>;
+ 		};
 +
 +		map_fan70 {
 +			trip = <&fan_70>;
-+			cooling-device = <&fan 11 11>;
++			cooling-device = <&fan 6 6>;
++		};
++
++		map_fan72 {
++			trip = <&fan_72>;
++			cooling-device = <&fan 7 7>;
++		};
++
++		map_fan74 {
++			trip = <&fan_74>;
++			cooling-device = <&fan 8 8>;
++		};
++
++		map_fan76 {
++			trip = <&fan_76>;
++			cooling-device = <&fan 9 9>;
++		};
++
++		map_fan78 {
++			trip = <&fan_78>;
++			cooling-device = <&fan 10 10>;
 +		};
 +
  	};
  };
  
-@@ -135,3 +242,35 @@
+@@ -135,3 +248,35 @@
  	gpios = <&gpio4 RK_PD2 GPIO_ACTIVE_HIGH>;
  	vin-supply = <&vcc5v0_sys>;
  };

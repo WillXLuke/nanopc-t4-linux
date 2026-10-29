@@ -81,7 +81,7 @@ log "kernel release: $KERNELRELEASE"
 # 2b. Board tuning patch: fan curve, 115200 console, 2.2/1.8 GHz overclock
 # ---------------------------------------------------------------------------
 BOARD_DTS=$SRC/arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts
-if grep -q 'fan_70' "$BOARD_DTS"; then
+if grep -q '2208000000' "$BOARD_DTS"; then
 	log "board tuning already applied"
 else
 	log "applying board tuning patch"

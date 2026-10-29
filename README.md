@@ -17,24 +17,24 @@ packaged as Debian packages with the in-tree `scripts/package` machinery.
 | `pkgs/sha256sums.txt`, `pkgs/config-7.3.0-nanopc-t4` | checksums and the exact kernel config |
 
 Prebuilt packages (`linux-image`, `-dbg`, `-headers`, `linux-dtb`, `linux-libc-dev`,
-version `7.3.0-6`, arm64) are attached to the release:
-<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-6>
+version `7.3.0-7`, arm64) are attached to the release:
+<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-7>
 
 ## 1. Artifacts (`pkgs/`)
 
 | File | Size | Purpose |
 |---|---|---|
-| `linux-image-7.3.0-nanopc-t4_7.3.0-6_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
-| `linux-headers-7.3.0-nanopc-t4_7.3.0-6_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
-| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-6_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
-| `linux-dtb-7.3.0-nanopc-t4_7.3.0-6_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
-| `linux-libc-dev_7.3.0-6_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
+| `linux-image-7.3.0-nanopc-t4_7.3.0-7_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
+| `linux-headers-7.3.0-nanopc-t4_7.3.0-7_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
+| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-7_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
+| `linux-dtb-7.3.0-nanopc-t4_7.3.0-7_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
+| `linux-libc-dev_7.3.0-7_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
 | `config-7.3.0-nanopc-t4` | 320 KB | the exact `.config` used |
-| `linux-upstream_7.3.0-6_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
+| `linux-upstream_7.3.0-7_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
 | `sha256sums.txt` | | checksums of all packages |
 
 Kernel release string: **7.3.0-nanopc-t4** (`CONFIG_LOCALVERSION="-nanopc-t4"`),
-Debian version `7.3.0-6`.
+Debian version `7.3.0-7`.
 
 ## 2. Build summary
 
@@ -100,9 +100,9 @@ policy routing (`IP_MULTIPLE_TABLES`/`IPV6_MULTIPLE_TABLES`/`FIB_RULES`).
 ## 5. Installing on the board
 
 ```sh
-sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-6_arm64.deb \
-             linux-dtb-7.3.0-nanopc-t4_7.3.0-6_arm64.deb \
-             linux-headers-7.3.0-nanopc-t4_7.3.0-6_arm64.deb
+sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-7_arm64.deb \
+             linux-dtb-7.3.0-nanopc-t4_7.3.0-7_arm64.deb \
+             linux-headers-7.3.0-nanopc-t4_7.3.0-7_arm64.deb
 sudo apt-get -f install      # only if initramfs-tools/kmod are missing
 ```
 
@@ -262,17 +262,32 @@ installed, plain
 Applied by `patches/0001-nanopc-t4-fan-uart-overclock.patch` to
 `arch/arm64/boot/dts/rockchip/rk3399-nanopc-t4.dts` (no kernel code changes):
 
-**Fan curve.** PWM must be at least 38/255 for the fan to spin, so the cooling
-levels are `0 38 60 81 103 125 147 168 190 212 233 255` (state 0 = off) and
-`cpu_thermal` gets 11 active trips, one fan state each:
+**Fan curve.** PWM must be at least 38/255 for this fan to spin, so the cooling
+levels are `0 38 62 86 110 134 159 183 207 231 255` (state 0 = off) and
+`cpu_thermal` gets 10 active trips, one fan state each:
 
-| Trip | 48 | 50 | 52 | 54 | 56 | 58 | 60 | 64 | 66 | 68 | 70 °C |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| PWM | 38 | 60 | 81 | 103 | 125 | 147 | 168 | 190 | 212 | 233 | 255 |
-| RPM (approx.) | ~1200 | | | | | | | | | | ~5000 |
+| Trip (°C) | 60 | 62 | 64 | 66 | 68 | 70 | 72 | 74 | 76 | 78 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| PWM (of 255) | 38 | 62 | 86 | 110 | 134 | 159 | 183 | 207 | 231 | 255 |
+| approx. RPM | ~1200 | | | | | | | | | ~5000 |
 
-Hysteresis is 1 °C; the SoC passive trips (70/75 °C) and 95 °C critical trip
-are unchanged, so the fan saturates at 70 °C just before CPU throttling starts.
+Hysteresis is 1 °C. The fan therefore stays silent below 60 °C, starts at the
+lowest duty the fan can actually run at, and reaches 100 % at 78 °C.
+
+**Thermal trips (CPU).** The RK3399 defaults (`cpu_alert0` 70 °C, `cpu_alert1`
+75 °C, `cpu_crit` 95 °C) are raised:
+
+| Trip | default | this build |
+|---|---|---|
+| `cpu_alert0` (big cores throttled) | 70 °C | **84 °C** |
+| `cpu_alert1` (all cores throttled) | 75 °C | **92 °C** |
+| `cpu_crit` (shutdown) | 95 °C | **98 °C** |
+
+Together this lets the big cluster hold 2.208 GHz up to 84 °C instead of being
+capped to 2.016 GHz at 70 °C, while the fan is already at full speed from 78 °C.
+It is well outside Rockchip's recommended envelope (SoC `tshut` default is
+95 °C): the board runs hotter, and `98 °C` critical gives only ~6 °C headroom
+above the throttling trip. Watch `thermal_zone0/temp`.
 
 **Console baud.** `chosen/stdout-path = "serial2:115200n8"` (upstream: 1.5 Mbaud).
 U-Boot still talks at its own baud rate; set `CONFIG_BAUDRATE=115200` there (or
