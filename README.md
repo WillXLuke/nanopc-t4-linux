@@ -17,24 +17,24 @@ packaged as Debian packages with the in-tree `scripts/package` machinery.
 | `pkgs/sha256sums.txt`, `pkgs/config-7.3.0-nanopc-t4` | checksums and the exact kernel config |
 
 Prebuilt packages (`linux-image`, `-dbg`, `-headers`, `linux-dtb`, `linux-libc-dev`,
-version `7.3.0-4`, arm64) are attached to the release:
-<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-4>
+version `7.3.0-5`, arm64) are attached to the release:
+<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.0-5>
 
 ## 1. Artifacts (`pkgs/`)
 
 | File | Size | Purpose |
 |---|---|---|
-| `linux-image-7.3.0-nanopc-t4_7.3.0-4_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
-| `linux-headers-7.3.0-nanopc-t4_7.3.0-4_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
-| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-4_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
-| `linux-dtb-7.3.0-nanopc-t4_7.3.0-4_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
-| `linux-libc-dev_7.3.0-4_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
+| `linux-image-7.3.0-nanopc-t4_7.3.0-5_arm64.deb` | 37 MB | kernel `Image.gz`, 1703 modules, DTBs, `System.map`, config |
+| `linux-headers-7.3.0-nanopc-t4_7.3.0-5_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
+| `linux-image-7.3.0-nanopc-t4-dbg_7.3.0-5_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
+| `linux-dtb-7.3.0-nanopc-t4_7.3.0-5_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
+| `linux-libc-dev_7.3.0-5_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
 | `config-7.3.0-nanopc-t4` | 320 KB | the exact `.config` used |
-| `linux-upstream_7.3.0-4_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
+| `linux-upstream_7.3.0-5_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
 | `sha256sums.txt` | | checksums of all packages |
 
 Kernel release string: **7.3.0-nanopc-t4** (`CONFIG_LOCALVERSION="-nanopc-t4"`),
-Debian version `7.3.0-4`.
+Debian version `7.3.0-5`.
 
 ## 2. Build summary
 
@@ -97,9 +97,9 @@ Modules (`=m`): `DRM_ROCKCHIP` (+ `dw-hdmi`, `dw-mipi-dsi`), `DRM_PANFROST`,
 ## 5. Installing on the board
 
 ```sh
-sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-4_arm64.deb \
-             linux-dtb-7.3.0-nanopc-t4_7.3.0-4_arm64.deb \
-             linux-headers-7.3.0-nanopc-t4_7.3.0-4_arm64.deb
+sudo dpkg -i linux-image-7.3.0-nanopc-t4_7.3.0-5_arm64.deb \
+             linux-dtb-7.3.0-nanopc-t4_7.3.0-5_arm64.deb \
+             linux-headers-7.3.0-nanopc-t4_7.3.0-5_arm64.deb
 sudo apt-get -f install      # only if initramfs-tools/kmod are missing
 ```
 
@@ -198,6 +198,20 @@ sudo nft list table inet ts_state     # sanity check
 iptables (`iptables-legacy`, `iptables -t nat ...`) the `IP_NF_*` and
 `xtables-legacy` modules are included too; `iptables-nft` needs only the first
 line above.
+
+**`-j MARK --set-mark 0x40000/0xff0000` fails?** iptables-nft translates the
+MARK target through `nft_compat`, so both `nft_compat.ko` and `xt_mark.ko`
+(match + target, target revision 2 carries the `value/mask` form) must exist:
+
+```sh
+sudo modprobe nft_compat xt_mark
+sudo iptables -t filter -A ts-forward -i tailscale0 -j MARK --set-mark 0x40000/0xff0000
+```
+
+The symptom of a missing module is `Warning: Extension MARK revision 0 not
+supported, missing kernel module?` followed by `MARK: bad value for option
+"--set-mark", or out of range` — revision 0 has no mask support, hence the
+rejection.
 
 **NVMe temperature.** `CONFIG_NVME_HWMON=y` exposes each namespace controller as
 a hwmon device:
