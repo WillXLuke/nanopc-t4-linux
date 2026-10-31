@@ -29,7 +29,7 @@ CROSS_COMPILE=aarch64-linux-gnu-
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 SRC=$ROOT/src/linux-$VER
-BUILD=$ROOT/build
+BUILD=${BUILD_DIR:-$ROOT/build}
 PKGS=$ROOT/pkgs
 FRAGMENT=$ROOT/configs/nanopc-t4.fragment
 URL=${URL:-https://cdn.kernel.org/pub/linux/kernel/v7.x}
