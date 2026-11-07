@@ -101,7 +101,6 @@ make -C "$SRC" ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE O="$BUILD" -j"$JOBS" all
 #    assembles the .debs)
 # ---------------------------------------------------------------------------
 DH_ENV=()
-SKIP_DEPS_CHECK=0
 if ! command -v dh_gencontrol >/dev/null 2>&1; then
 	log "bootstrapping debhelper into tools/dh"
 	mkdir -p "$ROOT/tools/dh"
@@ -112,8 +111,6 @@ if ! command -v dh_gencontrol >/dev/null 2>&1; then
 	done
 	DH_ENV=(env "PATH=$ROOT/tools/dh/root/usr/bin:$PATH"
 		    "PERL5LIB=$ROOT/tools/dh/root/usr/share/perl5")
-	log "note: running dpkg-buildpackage with -d (build-deps are known to be satisfied)"
-	SKIP_DEPS_CHECK=1
 fi
 
 # ---------------------------------------------------------------------------
@@ -143,9 +140,13 @@ rm -rf "$BUILD/debian"
 sed -i '/^Description: Linux kernel, version/i Depends: kmod\nRecommends: initramfs-tools, u-boot-tools, linux-firmware' \
 	"$BUILD/debian/control"
 
+# -d / --no-check-builddeps: this is a cross build, so dpkg would check the
+# Build-Depends-Arch of the *target* architecture (libssl-dev:arm64, ...),
+# which cannot be installed on an x86_64 host.  The host-side dependencies
+# (bc, bison, flex, libelf, rsync, debhelper, gcc-aarch64-linux-gnu) are
+# documented in the README.
 log "running dpkg-buildpackage"
-DPKG_ARGS=(--build=binary --no-pre-clean --unsigned-changes -j1 "-a$ARCH")
-[ "$SKIP_DEPS_CHECK" = 1 ] && DPKG_ARGS+=(-d)
+DPKG_ARGS=(--build=binary --no-pre-clean --unsigned-changes -j1 "-a$ARCH" -d)
 if [ ${#DH_ENV[@]} -gt 0 ]; then
 	( cd "$BUILD" && "${DH_ENV[@]}" dpkg-buildpackage "${DPKG_ARGS[@]}" )
 else

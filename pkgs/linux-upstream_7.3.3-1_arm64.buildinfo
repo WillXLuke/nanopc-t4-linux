@@ -1,27 +1,31 @@
 Format: 1.0
 Source: linux-upstream
-Binary: linux-headers-7.3.1-nanopc-t4 linux-image-7.3.1-nanopc-t4 linux-image-7.3.1-nanopc-t4-dbg linux-libc-dev
+Binary: linux-headers-7.3.3-nanopc-t4 linux-image-7.3.3-nanopc-t4 linux-image-7.3.3-nanopc-t4-dbg linux-libc-dev
 Architecture: arm64
-Version: 7.3.1-1
+Version: 7.3.3-1
 Checksums-Md5:
- 6d2c5d700cc9b868dea8eb6979f17474 9659950 linux-headers-7.3.1-nanopc-t4_7.3.1-1_arm64.deb
- f6173d67e0a00976519f85e8f2561128 109572504 linux-image-7.3.1-nanopc-t4-dbg_7.3.1-1_arm64.deb
- 5a84674ee6a36510b0a8e53e44942228 38234194 linux-image-7.3.1-nanopc-t4_7.3.1-1_arm64.deb
- bf111d3e6e82b0d23e9130f14091624e 1541344 linux-libc-dev_7.3.1-1_arm64.deb
+ 8c7f5cf76658b8c493342279064f2390 9660902 linux-headers-7.3.3-nanopc-t4_7.3.3-1_arm64.deb
+ 784f684f6b8638d005a61a92e3a6a607 109633918 linux-image-7.3.3-nanopc-t4-dbg_7.3.3-1_arm64.deb
+ d015a613ffd90b88c8b8ed04329e03f4 38244364 linux-image-7.3.3-nanopc-t4_7.3.3-1_arm64.deb
+ 36e563f6be73f03bd4e349a5ded87faa 1541560 linux-libc-dev_7.3.3-1_arm64.deb
 Checksums-Sha1:
- 17c79e4b7011881f1a5b947d600db3645cd6fe67 9659950 linux-headers-7.3.1-nanopc-t4_7.3.1-1_arm64.deb
- a9d2ae9480a739b1faa2840f48de96176365dd68 109572504 linux-image-7.3.1-nanopc-t4-dbg_7.3.1-1_arm64.deb
- 0ed5acc8c377c6a012d3cdf9837d7c5bcf29b660 38234194 linux-image-7.3.1-nanopc-t4_7.3.1-1_arm64.deb
- fcc73983619a2c3f3b48c2cfcb7561f65fa81233 1541344 linux-libc-dev_7.3.1-1_arm64.deb
+ 1542cb9a52130ae349dddad93003c9d97d69e3a1 9660902 linux-headers-7.3.3-nanopc-t4_7.3.3-1_arm64.deb
+ 3311443f550d540cf5da25d2f03a85da2d7c0305 109633918 linux-image-7.3.3-nanopc-t4-dbg_7.3.3-1_arm64.deb
+ ff6e24ce99cb3fd581d596658c9395d82649b60e 38244364 linux-image-7.3.3-nanopc-t4_7.3.3-1_arm64.deb
+ 53cb8e57e2aea8543ec808301da7fd1a62255681 1541560 linux-libc-dev_7.3.3-1_arm64.deb
 Checksums-Sha256:
- 716cdf2e6369d0cc3dd06081cc591036f82e63ec7671832ee4dc45c8468481f3 9659950 linux-headers-7.3.1-nanopc-t4_7.3.1-1_arm64.deb
- 64654074851341f9f7792f829f300509f6a3b02254a6670e7f8720a447c5494c 109572504 linux-image-7.3.1-nanopc-t4-dbg_7.3.1-1_arm64.deb
- be68056a001e4ee29429017b0fbcea12918f3b10d9323c532b48cc674a307d70 38234194 linux-image-7.3.1-nanopc-t4_7.3.1-1_arm64.deb
- 73eec2f68a21656b21750906cf87f28452b6bc0b2c383acad99f55e6bd477d1c 1541344 linux-libc-dev_7.3.1-1_arm64.deb
+ 7bacc1bd5f1d48c48cb10ba51d1ae5dd07d95c73fa5906f4a136ccc037d145f8 9660902 linux-headers-7.3.3-nanopc-t4_7.3.3-1_arm64.deb
+ 50d604912a3abb2b364dfe2e4b1e7e7c7c49447eaecd44d73849ca847cc80070 109633918 linux-image-7.3.3-nanopc-t4-dbg_7.3.3-1_arm64.deb
+ 9474b778951483d1e2f3e1b9c94f0b3f6117bdf65fa2574b0dfab2b980c89cf2 38244364 linux-image-7.3.3-nanopc-t4_7.3.3-1_arm64.deb
+ 9bf409221804f441117716c9a7a3bac055b4ce220ee2f06fa6354387d0739f72 1541560 linux-libc-dev_7.3.3-1_arm64.deb
 Build-Origin: Ubuntu
 Build-Architecture: amd64
-Build-Date: Sun, 01 Nov 2026 03:18:45 +0800
+Build-Date: Sat, 07 Nov 2026 23:34:51 +0800
 Installed-Build-Depends:
+ autoconf (= 2.72-3.1ubuntu2),
+ automake (= 1:1.18.1-3build1),
+ autopoint (= 0.23.2-1),
+ autotools-dev (= 20240727.1build1),
  base-files (= 14ubuntu6.2),
  base-passwd (= 3.6.8),
  bash (= 5.3-2ubuntu1),
@@ -31,6 +35,7 @@ Installed-Build-Depends:
  binutils-common (= 2.46-3ubuntu2),
  binutils-x86-64-linux-gnu (= 2.46-3ubuntu2),
  bison (= 2:3.8.2+dfsg-1ubuntu0.26.04.1),
+ bsdextrautils (= 2.41.3-3ubuntu2.2),
  build-essential (= 12.12ubuntu2.26.04.2),
  bzip2 (= 1.0.8-6ubuntu0.1),
  coreutils (= 9.5-1ubuntu2+0.0.0~ubuntu25),
@@ -43,10 +48,16 @@ Installed-Build-Depends:
  cpp-x86-64-linux-gnu (= 4:15.2.0-5ubuntu1),
  dash (= 0.5.12-12ubuntu3),
  debconf (= 1.5.92),
+ debhelper (= 13.31ubuntu1),
  debianutils (= 5.23.2build1),
+ debugedit (= 1:5.3-4),
+ dh-autoreconf (= 21+nmu1),
+ dh-strip-nondeterminism (= 1.15.0-1build1),
  diffutils (= 1:3.12-1ubuntu0.1),
  dpkg (= 1.23.7ubuntu1),
  dpkg-dev (= 1.23.7ubuntu1),
+ dwz (= 0.16-4),
+ file (= 1:5.46-5build2),
  findutils (= 4.10.0-3build2),
  flex (= 2.6.4-8.2build2),
  g++ (= 4:15.2.0-5ubuntu1),
@@ -65,20 +76,25 @@ Installed-Build-Depends:
  gcc-16-cross-base (= 16-20260322-1ubuntu1cross1),
  gcc-aarch64-linux-gnu (= 4:15.2.0-5ubuntu1),
  gcc-x86-64-linux-gnu (= 4:15.2.0-5ubuntu1),
+ gettext (= 0.23.2-1),
+ gettext-base (= 0.23.2-1),
  gnu-coreutils (= 9.7-3ubuntu2.1),
  grep (= 3.12-1),
+ groff-base (= 1.23.0-10),
  gzip (= 1.14-1~exp2ubuntu1.1),
  hostname (= 3.25build1),
  init-system-helpers (= 1.69),
+ intltool-debian (= 0.35.0+20060710.6build1),
  kmod (= 34.2-2ubuntu2),
  libacl1 (= 2.3.2-2),
+ libarchive-zip-perl (= 1.68-1),
  libasan8 (= 16-20260322-1ubuntu1),
  libasan8-arm64-cross (= 16-20260322-1ubuntu1cross1),
  libatomic1 (= 16-20260322-1ubuntu1),
  libatomic1-arm64-cross (= 16-20260322-1ubuntu1cross1),
  libattr1 (= 1:2.5.2-4ubuntu0.1),
- libaudit-common (= 1:4.1.2-1build1),
- libaudit1 (= 1:4.1.2-1build1),
+ libaudit-common (= 1:4.1.2-1ubuntu0.1),
+ libaudit1 (= 1:4.1.2-1ubuntu0.1),
  libbinutils (= 2.46-3ubuntu2),
  libblkid1 (= 2.41.3-3ubuntu2.2),
  libbz2-1.0 (= 1.0.8-6ubuntu0.1),
@@ -96,11 +112,14 @@ Installed-Build-Depends:
  libctf0 (= 2.46-3ubuntu2),
  libdb5.3t64 (= 5.3.28+dfsg2-10ubuntu1),
  libdebconfclient0 (= 0.280ubuntu1),
+ libdebhelper-perl (= 13.31ubuntu1),
  libdpkg-perl (= 1.23.7ubuntu1),
+ libdw1t64 (= 0.194-4),
  libelf-dev (= 0.194-4),
  libelf1t64 (= 0.194-4),
  libexpat1 (= 2.7.4-1ubuntu0.2),
  libffi8 (= 3.5.2-4),
+ libfile-stripnondeterminism-perl (= 1.15.0-1build1),
  libgcc-15-dev (= 15.2.0-16ubuntu1),
  libgcc-15-dev-arm64-cross (= 15.2.0-16ubuntu1cross1),
  libgcc-s1 (= 16-20260322-1ubuntu1),
@@ -122,6 +141,8 @@ Installed-Build-Depends:
  liblsan0-arm64-cross (= 16-20260322-1ubuntu1cross1),
  liblz4-1 (= 1.10.0-8),
  liblzma5 (= 5.8.3-1ubuntu0.1),
+ libmagic-mgc (= 1:5.46-5build2),
+ libmagic1t64 (= 1:5.46-5build2),
  libmd0 (= 1.1.0-2build4),
  libmount1 (= 2.41.3-3ubuntu2.2),
  libmpc3 (= 1.3.1-3),
@@ -131,14 +152,16 @@ Installed-Build-Depends:
  libpam-modules-bin (= 1.7.0-5ubuntu3.2),
  libpam-runtime (= 1.7.0-5ubuntu3.2),
  libpam0g (= 1.7.0-5ubuntu3.2),
- libpcre2-8-0 (= 10.46-1build1),
+ libpcre2-8-0 (= 10.46-1ubuntu0.1),
  libperl5.40 (= 5.40.1-7ubuntu0.3),
+ libpipeline1 (= 1.5.8-2),
  libpopt0 (= 1.19+dfsg-2build1),
  libpython3-stdlib (= 3.14.3-0ubuntu2),
  libpython3.14-minimal (= 3.14.4-1ubuntu0.2),
  libpython3.14-stdlib (= 3.14.4-1ubuntu0.2),
  libquadmath0 (= 16-20260322-1ubuntu1),
  libreadline8t64 (= 8.3-4),
+ libseccomp2 (= 2.6.0-2ubuntu5),
  libselinux1 (= 3.9-4build1),
  libsframe3 (= 2.46-3ubuntu2),
  libsmartcols1 (= 2.41.3-3ubuntu2.2),
@@ -148,21 +171,26 @@ Installed-Build-Depends:
  libstdc++-15-dev (= 15.2.0-16ubuntu1),
  libstdc++6 (= 16-20260322-1ubuntu1),
  libstdc++6-arm64-cross (= 16-20260322-1ubuntu1cross1),
- libsystemd0 (= 259.5-0ubuntu3.4),
+ libsystemd0 (= 259.9-0ubuntu0.1),
  libtinfo6 (= 6.6+20251231-1),
+ libtool (= 2.5.4-9),
  libtsan2 (= 16-20260322-1ubuntu1),
  libtsan2-arm64-cross (= 16-20260322-1ubuntu1cross1),
  libubsan1 (= 16-20260322-1ubuntu1),
  libubsan1-arm64-cross (= 16-20260322-1ubuntu1cross1),
- libudev1 (= 259.5-0ubuntu3.4),
+ libuchardet0 (= 0.0.8-2),
+ libudev1 (= 259.9-0ubuntu0.1),
+ libunistring5 (= 1.3-2build1),
  libuuid1 (= 2.41.3-3ubuntu2.2),
+ libxml2-16 (= 2.15.2+dfsg-0.1ubuntu0.3),
  libxxhash0 (= 0.8.3-2build1),
  libzstd-dev (= 1.5.7+dfsg-3),
  libzstd1 (= 1.5.7+dfsg-3),
- linux-libc-dev (= 7.0.0-38.38),
+ linux-libc-dev (= 7.0.0-42.42),
  lto-disabled-list (= 79),
  m4 (= 1.4.21-1),
  make (= 4.4.1-3),
+ man-db (= 2.13.1-1build1),
  mawk (= 1.3.4.20260129-1),
  media-types (= 14.0.0build1),
  ncurses-base (= 6.6+20251231-1),
@@ -173,6 +201,7 @@ Installed-Build-Depends:
  perl (= 5.40.1-7ubuntu0.3),
  perl-base (= 5.40.1-7ubuntu0.3),
  perl-modules-5.40 (= 5.40.1-7ubuntu0.3),
+ po-debconf (= 1.0.22),
  python3 (= 3.14.3-0ubuntu2),
  python3-minimal (= 3.14.3-0ubuntu2),
  python3.14 (= 3.14.4-1ubuntu0.2),
@@ -180,8 +209,9 @@ Installed-Build-Depends:
  readline-common (= 8.3-4),
  rpcsvc-proto (= 1.4.3-1build1),
  rsync (= 3.4.1+ds1-7ubuntu0.3),
- rust-coreutils (= 0.8.0-0ubuntu3),
+ rust-coreutils (= 0.10.0-1ubuntu2~26.04.1),
  sed (= 4.9-2ubuntu1),
+ sensible-utils (= 0.0.26build1),
  sysvinit-utils (= 3.15-5ubuntu1),
  tar (= 1.35+dfsg-4ubuntu0.4),
  tzdata (= 2026e-0ubuntu0.26.04.1),
@@ -193,4 +223,4 @@ Environment:
  DEB_BUILD_OPTIONS="parallel=1"
  DEB_BUILD_PROFILES="derivative.ubuntu noudeb"
  LANG="C.UTF-8"
- SOURCE_DATE_EPOCH="1793474188"
+ SOURCE_DATE_EPOCH="1794065538"
