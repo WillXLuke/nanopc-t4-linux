@@ -14,38 +14,38 @@ packaged as Debian packages with the in-tree `scripts/package` machinery.
 | `configs/nanopc-t4.fragment` | `arm64 defconfig` delta: NVMe/PCIe/GMAC built in, distro extras as modules |
 | `boot/nanopc-t4-bootlinks` | kernel hook that links `/boot/Image` and `/boot/uInitrd` |
 | `boot/extlinux.conf.example` | U-Boot extlinux entry, `ttyS2` @ 115200 |
-| `pkgs/sha256sums.txt`, `pkgs/config-7.3.3-nanopc-t4` | checksums and the exact kernel config |
+| `pkgs/sha256sums.txt`, `pkgs/config-7.3.4-nanopc-t4` | checksums and the exact kernel config |
 
 Prebuilt packages (`linux-image`, `-dbg`, `-headers`, `linux-dtb`, `linux-libc-dev`,
-version `7.3.3-1`, arm64) are attached to the release:
-<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.3-1>
+version `7.3.4-1`, arm64) are attached to the release:
+<https://github.com/WillXLuke/nanopc-t4-linux/releases/tag/v7.3.4-1>
 
 ## 1. Artifacts (`pkgs/`)
 
 | File | Size | Purpose |
 |---|---|---|
-| `linux-image-7.3.3-nanopc-t4_7.3.3-1_arm64.deb` | 37 MB | kernel `Image.gz`, 1724 modules, DTBs, `System.map`, config |
-| `linux-headers-7.3.3-nanopc-t4_7.3.3-1_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
-| `linux-image-7.3.3-nanopc-t4-dbg_7.3.3-1_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
-| `linux-dtb-7.3.3-nanopc-t4_7.3.3-1_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
-| `linux-libc-dev_7.3.3-1_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
-| `config-7.3.3-nanopc-t4` | 320 KB | the exact `.config` used |
-| `linux-upstream_7.3.3-1_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
+| `linux-image-7.3.4-nanopc-t4_7.3.4-1_arm64.deb` | 37 MB | kernel `Image.gz`, 1724 modules, DTBs, `System.map`, config |
+| `linux-headers-7.3.4-nanopc-t4_7.3.4-1_arm64.deb` | 9.3 MB | pruned headers + cross-built host tools (`dkms`/out-of-tree modules) |
+| `linux-image-7.3.4-nanopc-t4-dbg_7.3.4-1_arm64.deb` | 104 MB | `vmlinux` + per-module debug symbols (optional) |
+| `linux-dtb-7.3.4-nanopc-t4_7.3.4-1_arm64.deb` | 115 KB | 50 RK3399 DTBs + `hd702e` overlay in `/boot/dtb/rockchip/` |
+| `linux-libc-dev_7.3.4-1_arm64.deb` | 1.5 MB | UAPI headers (glibc/kernel headers; conflicts with distro `linux-libc-dev`) |
+| `config-7.3.4-nanopc-t4` | 320 KB | the exact `.config` used |
+| `linux-upstream_7.3.4-1_arm64.changes/.buildinfo` | 10 KB | dpkg-buildpackage metadata |
 | `sha256sums.txt` | | checksums of all packages |
 
-Kernel release string: **7.3.3-nanopc-t4** (`CONFIG_LOCALVERSION="-nanopc-t4"`),
-Debian version `7.3.3-1`.
+Kernel release string: **7.3.4-nanopc-t4** (`CONFIG_LOCALVERSION="-nanopc-t4"`),
+Debian version `7.3.4-1`.
 
 ## 2. Build summary
 
-* Source: `linux-7.3.3.tar.xz` from kernel.org, sha256
-  `79c66dde66cd96877fcde8f7d36aec946b1f423d2b97b5a7b1751b75c764f3d1`
-  (**stable 7.3.3**, released 2026-11-06).
+* Source: `linux-7.3.4.tar.xz` from kernel.org, sha256
+  `b11b6df8295e8e991ff040b71aaa4994a8b55caa23b6b092907f195b5840fd1f`
+  (**stable 7.3.4**, released 2026-11-10).
 * Config: `arch/arm64/configs/defconfig` + `configs/nanopc-t4.fragment`.
-* `make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build-7.3.3 -j16 all`
+* `make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build-7.3.4 -j16 all`
   ≈ 14 min on 16 vCPU; 3.7 GB of objects (full build, no object reuse).
 * The board patch is unchanged from the earlier builds: `rk3399-nanopc-t4.dts`
-  and `scripts/package/builddeb` are identical in 7.3, 7.3.1 and 7.3.3, so the
+  and `scripts/package/builddeb` are identical in 7.3, 7.3.1, 7.3.3 and 7.3.4, so the
   same patch applies to all three lineages.
 * Packaging: `scripts/package/mkdebian` + `scripts/package/builddeb`, driven
   by `dpkg-buildpackage --build=binary -aarm64 -d` — i.e. exactly what
@@ -60,11 +60,11 @@ Debian version `7.3.3-1`.
 ## 3. What is in the image package
 
 ```
-/boot/vmlinuz-7.3.3-nanopc-t4            gzip-compressed arm64 Image
-/boot/System.map-7.3.3-nanopc-t4
-/boot/config-7.3.3-nanopc-t4
-/lib/modules/7.3.3-nanopc-t4/            1724 modules + modules.dep
-/usr/lib/linux-image-7.3.3-nanopc-t4/    arm64 DTBs, rockchip/
+/boot/vmlinuz-7.3.4-nanopc-t4            gzip-compressed arm64 Image
+/boot/System.map-7.3.4-nanopc-t4
+/boot/config-7.3.4-nanopc-t4
+/lib/modules/7.3.4-nanopc-t4/            1724 modules + modules.dep
+/usr/lib/linux-image-7.3.4-nanopc-t4/    arm64 DTBs, rockchip/
                                          rk3399-nanopc-t4.dtb
                                          rk3399-nanopc-t4-hd702e.dtb (panel overlay)
 /etc/kernel/postinst.d/zz-nanopc-t4-bootlinks     /boot/Image link (see §6)
@@ -104,9 +104,9 @@ policy routing (`IP_MULTIPLE_TABLES`/`IPV6_MULTIPLE_TABLES`/`FIB_RULES`).
 ## 5. Installing on the board
 
 ```sh
-sudo dpkg -i linux-image-7.3.3-nanopc-t4_7.3.3-1_arm64.deb \
-             linux-dtb-7.3.3-nanopc-t4_7.3.3-1_arm64.deb \
-             linux-headers-7.3.3-nanopc-t4_7.3.3-1_arm64.deb
+sudo dpkg -i linux-image-7.3.4-nanopc-t4_7.3.4-1_arm64.deb \
+             linux-dtb-7.3.4-nanopc-t4_7.3.4-1_arm64.deb \
+             linux-headers-7.3.4-nanopc-t4_7.3.4-1_arm64.deb
 sudo apt-get -f install      # only if initramfs-tools/kmod are missing
 ```
 
@@ -128,14 +128,14 @@ complete upstream package set).
 Install `linux-dtb-...` and add an entry (see `boot/extlinux.conf.example`):
 
 ```
-label linux-7.3.3-nanopc-t4
-  kernel /boot/vmlinuz-7.3.3-nanopc-t4
+label linux-7.3.4-nanopc-t4
+  kernel /boot/vmlinuz-7.3.4-nanopc-t4
   fdt /boot/dtb/rockchip/rk3399-nanopc-t4.dtb
   append root=PARTUUID=<rootfs-partuuid> rootwait rw console=ttyS2,115200n8
 ```
 
 (Without the DTB package the same file lives in
-`/usr/lib/linux-image-7.3.3-nanopc-t4/rockchip/`; copy it to `/boot/dtb/`.)
+`/usr/lib/linux-image-7.3.4-nanopc-t4/rockchip/`; copy it to `/boot/dtb/`.)
 
 * Serial console on the NanoPC-T4 is `ttyS2` at **115200** 8N1 (this build
   overrides the upstream `stdout-path` default of 1.5 Mbaud, see §11).
@@ -151,8 +151,8 @@ The image package ships hooks that relink the fixed names every time it is
 installed, upgraded or removed:
 
 ```
-/boot/Image   -> vmlinuz-7.3.3-nanopc-t4
-/boot/uInitrd -> uInitrd-7.3.3-nanopc-t4      (mkimage wrapped initrd)
+/boot/Image   -> vmlinuz-7.3.4-nanopc-t4
+/boot/uInitrd -> uInitrd-7.3.4-nanopc-t4      (mkimage wrapped initrd)
 ```
 
 * `/etc/kernel/postinst.d/zz-nanopc-t4-bootlinks` runs after initramfs-tools
